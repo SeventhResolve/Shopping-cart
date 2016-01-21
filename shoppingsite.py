@@ -8,6 +8,8 @@ Authors: Joel Burton, Christian Fernandez, Meggie Mahnken.
 
 
 from flask import Flask, render_template, redirect, flash, session
+from flask_debugtoolbar import DebugToolbarExtension
+
 import jinja2
 
 import melons
@@ -72,7 +74,27 @@ def shopping_cart():
     #   - keep track of the total amt of the entire order
     # - hand to the template the total order cost and the list of melon types
 
-    return render_template("cart.html")
+    '''
+    for session['melon_cart'] loop over value list
+    then get melon id number, with melon id number
+    pull melon name, quantity, and price. then 
+    calculate total then pass total to the web page
+
+    then do jinja2
+    '''
+
+    check_out_cart = session['melon_cart']
+
+    for melon in check_out_cart:
+        print type(melon)
+        # melons.get_by_id(melon)
+
+    print session['melon_cart']
+    print "*********************************"
+
+    return render_template("cart.html",
+                            jin_checkout=check_out_cart,
+                            )
 
 
 @app.route("/add_to_cart/<int:id>")
@@ -84,27 +106,20 @@ def add_to_cart(id):
     """
 
 
-
-    # loop though list, if list is empty, stick melon into list
-    # else append melon to list
-    # session["melon_cart"] = 
-    # empty_list.append("asdf")
-    
-    if session.get('melon_cart', []) :
-        session['melon_cart'].append('asdf')
-        print "Went through if loop"
-
     # TODO: Finish shopping cart functionality
 
     # The logic here should be something like:
     #
     # - add the id of the melon they bought to the cart in the session
-    print "+++++++++++++++++++++++++++++"
-    print session['melon_cart']
-    # session['melon_id'] = 
+  
 
+    if session.get('melon_cart'):    
+        session['melon_cart'].append(id)
+        print "Went through if loop"
+    else:
+        session['melon_cart'] = [id]
 
-    return "BLAH!!!!!!"
+    return render_template("cart.html")
 
 
 @app.route("/login", methods=["GET"])
@@ -139,4 +154,6 @@ def checkout():
 
 
 if __name__ == "__main__":
+    app.debug = True
+    DebugToolbarExtension(app)
     app.run(debug=True)
